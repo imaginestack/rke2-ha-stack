@@ -1,0 +1,9 @@
+---
+- name: Deploy Cilium CNI
+  hosts: masters
+  become: true
+  tasks:
+    - name: Deploy Cilium
+      shell: |
+        kubectl apply -f https://raw.githubusercontent.com/cilium/cilium/v{{ cilium_tag }}/install/kubernetes/quick-install.yaml
+

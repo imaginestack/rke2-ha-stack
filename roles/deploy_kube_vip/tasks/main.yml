@@ -1,0 +1,36 @@
+---
+- name: Deploy kube-vip
+  shell: |
+    export VIP=192.168.10.111
+    export INTERFACE=eth0
+    kubectl apply -f https://kube-vip.io/manifests/kube-vip-rbac.yaml
+    kubectl create -f - <<EOF
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: kube-vip
+      namespace: kube-system
+      labels:
+        component: kube-vip
+    spec:
+      containers:
+      - name: kube-vip
+        image: plndr/kube-vip:0.3.8
+        args:
+        - start
+        - --interface
+        - ${INTERFACE}
+        - --vip
+        - ${VIP}
+        - --arp
+        - --leaderElection
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN", "SYS_TIME"]
+        env:
+        - name: vip_arp
+          value: "true"
+        - name: cp_enable
+          value: "true"
+      hostNetwork: true
+    EOF

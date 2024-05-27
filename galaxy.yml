@@ -1,0 +1,36 @@
+### REQUIRED
+namespace: cto
+name: rke2_ansible
+version: 1.0.0
+readme: README.md
+authors:
+  - cto <cto@imaginestack.io>
+
+### OPTIONAL but strongly recommended
+description: >
+  The easiest way to bootstrap a self-hosted High Availability RKE2 Server
+  cluster. A fully automated HA RKE2 etcd install with kube-vip, MetalLB,
+  and more.
+
+license:
+  - Apache-2.0
+
+tags:
+  - etcd
+  - high-availability
+  - k8s
+  - rke2
+  - rke2-cluster
+  - kube-vip
+  - kubernetes
+  - metallb
+  - rancher
+
+dependencies:
+  ansible.utils: '*'
+  ansible.posix: '*'
+  community.general: '*'
+  kubernetes.core: '*'
+
+repository: https://github.com/imaginestack/collections/rke2-ansible
+documentation: https://github.com/imaginestack/collections/rke2-ansible

@@ -1,0 +1,35 @@
+os: "linux"
+arch: "amd64"
+
+ansible_user: cto
+ansible_become: true
+ansible_become_method: sudo
+
+rke2_version: "v1.29.4+rke2r1"
+rke2_install_dir: "/usr/local/bin"
+rke2_binary_url: "https://github.com/rancher/rke2/releases/download/{{ rke2_version }}/rke2.linux-amd64"
+
+systemd_dir: /etc/systemd/system
+system_timezone: "America/Los_Angeles"
+
+# CNI Configuration
+cilium_iface: "eth0"
+cilium_mode: "native"
+cilium_tag: "v1.15.2"
+cilium_hubble: true
+# Commented out Calico CNI option
+# cni: "calico"
+
+cluster_cidr: "10.69.0.0/16"
+
+# Control Plane VIP
+apiserver_endpoint: "192.168.10.111"
+rke2_token: "kubernetesecretoken"
+
+# kube-vip version
+kube_vip_version: "v0.8.0"
+
+# MetalLB Configuration
+metal_lb_speaker_tag_version: "v0.14.4"
+metal_lb_controller_tag_version: "v0.14.4"
+metal_lb_ip_range: "192.168.10.50-192.168.10.60"

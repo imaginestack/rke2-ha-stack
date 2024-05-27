@@ -1,0 +1,10 @@
+---
+- name: Apply overrides
+  hosts: all
+  tasks:
+    - name: Override host variables
+      ansible.builtin.set_fact:
+        cilium_iface: eth1
+        retry_count: 45
+        apiserver_endpoint: "192.168.10.111"
+        metal_lb_ip_range: "192.168.10.50-192.168.10.60"

@@ -1,0 +1,55 @@
+---
+- name: Deploy Cert-Manager
+  hosts: masters
+  become: true
+  tasks:
+    - name: Install Cert-Manager CRDs
+      shell: |
+        kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.3/cert-manager.crds.yaml
+
+    - name: Add Jetstack Helm repository
+      shell: |
+        helm repo add jetstack https://charts.jetstack.io
+        helm repo update
+
+    - name: Install Cert-Manager Helm chart
+      shell: |
+        helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace
+
+    - name: Create ClusterIssuer for Let's Encrypt staging
+      shell: |
+        kubectl apply -f - <<EOF
+        apiVersion: cert-manager.io/v1
+        kind: ClusterIssuer
+        metadata:
+          name: letsencrypt-staging
+        spec:
+          acme:
+            server: https://acme-staging-v02.api.letsencrypt.org/directory
+            email: your-email@example.com
+            privateKeySecretRef:
+              name: letsencrypt-staging
+            solvers:
+            - http01:
+                ingress:
+                  class: traefik
+        EOF
+
+    - name: Create ClusterIssuer for Let's Encrypt production
+      shell: |
+        kubectl apply -f - <<EOF
+        apiVersion: cert-manager.io/v1
+        kind: ClusterIssuer
+        metadata:
+          name: letsencrypt-production
+        spec:
+          acme:
+            server: https://acme-v02.api.letsencrypt.org/directory
+            email: your-email@example.com
+            privateKeySecretRef:
+              name: letsencrypt-production
+            solvers:
+            - http01:
+                ingress:
+                  class: traefik
+        EOF

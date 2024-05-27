@@ -1,0 +1,109 @@
+---
+- name: Pre tasks
+  hosts: all
+  pre_tasks:
+    - name: Verify Ansible is version 2.11 or above. (If this fails you may need to update Ansible)
+      assert:
+        that: "ansible_version.full is version_compare('2.11', '>=')"
+        msg: >
+          "Ansible is out of date. See here for more info: https://docs.technotim.live/posts/ansible-automation/"
+
+- name: Setup RKE2 servers
+  hosts: masters
+  roles:
+    - role: install_rke2
+      become: true
+
+- name: Deploy kube-vip
+  hosts: masters
+  roles:
+    - role: deploy_kube_vip
+      become: true
+
+- name: Deploy MetalLB
+  hosts: masters
+  roles:
+    - role: deploy_metallb
+      become: true
+
+- name: Deploy Cilium
+  hosts: masters
+  roles:
+    - role: deploy_cilium
+      become: true
+
+- name: Install Helm
+  hosts: masters
+  become: true
+  tasks:
+    - name: Download Helm
+      get_url:
+        url: https://get.helm.sh/helm-v3.14.0-linux-amd64.tar.gz
+        dest: /tmp/helm-v3.14.0-linux-amd64.tar.gz
+
+    - name: Extract Helm
+      unarchive:
+        src: /tmp/helm-v3.14.0-linux-amd64.tar.gz
+        dest: /tmp
+        remote_src: true
+
+    - name: Move Helm binary to /usr/local/bin
+      command: mv /tmp/linux-amd64/helm /usr/local/bin/helm
+
+    - name: Ensure Helm binary is executable
+      file:
+        path: /usr/local/bin/helm
+        mode: '0755'
+        state: file
+
+- name: Deploy Traefik
+  hosts: masters
+  roles:
+    - role: deploy_traefik
+      become: true
+
+- name: Deploy Cert-Manager
+  hosts: masters
+  roles:
+    - role: deploy_cert_manager
+      become: true
+
+- name: Verify RKE2 Cluster
+  hosts: all
+  tasks:
+    - name: Check if all nodes are Ready
+      shell: kubectl get nodes
+      register: result
+    - name: Print node status
+      debug:
+        msg: "{{ result.stdout }}"
+    - name: Check if kube-vip is running
+      shell: kubectl get pods -n kube-system | grep kube-vip
+      register: kube_vip_result
+    - name: Print kube-vip status
+      debug:
+        msg: "{{ kube_vip_result.stdout }}"
+    - name: Check if MetalLB is running
+      shell: kubectl get pods -n metallb-system
+      register: metallb_result
+    - name: Print MetalLB status
+      debug:
+        msg: "{{ metallb_result.stdout }}"
+    - name: Check if Cilium is running
+      shell: kubectl get pods -n kube-system | grep cilium
+      register: cilium_result
+    - name: Print Cilium status
+      debug:
+        msg: "{{ cilium_result.stdout }}"
+    - name: Check if Traefik is running
+      shell: kubectl get pods -n kube-system | grep traefik
+      register: traefik_result
+    - name: Print Traefik status
+      debug:
+        msg: "{{ traefik_result.stdout }}"
+    - name: Check if Cert-Manager is running
+      shell: kubectl get pods -n cert-manager | grep cert-manager
+      register: cert_manager_result
+    - name: Print Cert-Manager status
+      debug:
+        msg: "{{ cert_manager_result.stdout }}"

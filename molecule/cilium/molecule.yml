@@ -1,0 +1,43 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+platforms:
+  - name: control1
+    box: generic/ubuntu2204
+    memory: 4096
+    cpus: 4
+    config_options:
+      ssh.username: "vagrant"
+      ssh.password: "vagrant"
+    groups:
+      - rke2_cluster
+      - master
+    interfaces:
+      - network_name: private_network
+        ip: 192.168.10.35
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_VERBOSITY: 1
+  playbooks:
+    converge: ../resources/converge.yml
+    side_effect: ../resources/reset.yml
+    verify: ../resources/verify.yml
+  inventory:
+    links:
+      group_vars: ../../inventory/group_vars
+scenario:
+  test_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - verify
+    - side_effect
+    - cleanup
+    - destroy

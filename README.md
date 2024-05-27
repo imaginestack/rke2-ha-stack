@@ -39,6 +39,7 @@ git clone https://github.com/yourusername/rke2-ha-stack.git
 cd rke2-ha-stack
 ```
 ### Install Ansible Collections
+
 ```
 ansible-galaxy collection install -r ./collections/requirements.yml
 ```

@@ -1,0 +1,40 @@
+---
+- name: Deploy Traefik Ingress Controller
+  hosts: masters
+  become: true
+  tasks:
+    - name: Create Traefik values file
+      copy:
+        content: |
+          api:
+            insecure: true
+          additionalArguments:
+            - "--certificatesresolvers.le.acme.tlschallenge=true"
+            - "--certificatesresolvers.le.acme.email=your-email@example.com"
+            - "--certificatesresolvers.le.acme.storage=acme.json"
+            - "--certificatesresolvers.le.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
+          ports:
+            web:
+              redirectTo: websecure
+            websecure:
+              tls:
+                certResolver: le
+          ingressRoute:
+            dashboard:
+              middlewares:
+                - authtraefik
+          middlewares:
+            authtraefik:
+              basicAuth:
+                users:
+                  - "admin:$(htpasswd -nb admin password | openssl base64)"
+        dest: /tmp/traefik-values.yml
+
+    - name: Add Traefik Helm repository
+      shell: |
+        helm repo add traefik https://helm.traefik.io/traefik
+        helm repo update
+
+    - name: Install Traefik Helm chart
+      shell: |
+        helm install traefik traefik/traefik -f /tmp/traefik-values.yml
