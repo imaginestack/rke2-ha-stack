@@ -1,0 +1,28 @@
+api:
+  insecure: true
+additionalArguments:
+  - "--certificatesresolvers.le.acme.tlschallenge=true"
+  - "--certificatesresolvers.le.acme.email={{ letsencrypt_email }}"
+  - "--certificatesresolvers.le.acme.storage=acme.json"
+  - "--certificatesresolvers.le.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
+ports:
+  web:
+    redirectTo: websecure
+  websecure:
+    tls:
+      certResolver: le
+ingressRoute:
+  dashboard:
+    middlewares:
+      - authtraefik
+middlewares:
+  authtraefik:
+    basicAuth:
+      users:
+        - "admin:{{ htpasswd_hash }}"
+replicas: 2
+service:
+  type: LoadBalancer
+  loadBalancerIP: {{ metal_lb_ip_range.split('-')[1] }}
+  annotations:
+    metallb.universe.tf/address-pool: default

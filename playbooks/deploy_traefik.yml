@@ -4,30 +4,8 @@
   become: true
   tasks:
     - name: Create Traefik values file
-      copy:
-        content: |
-          api:
-            insecure: true
-          additionalArguments:
-            - "--certificatesresolvers.le.acme.tlschallenge=true"
-            - "--certificatesresolvers.le.acme.email=your-email@example.com"
-            - "--certificatesresolvers.le.acme.storage=acme.json"
-            - "--certificatesresolvers.le.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
-          ports:
-            web:
-              redirectTo: websecure
-            websecure:
-              tls:
-                certResolver: le
-          ingressRoute:
-            dashboard:
-              middlewares:
-                - authtraefik
-          middlewares:
-            authtraefik:
-              basicAuth:
-                users:
-                  - "admin:$(htpasswd -nb admin password | openssl base64)"
+      template:
+        src: "{{ playbook_dir }}/roles/deploy_traefik/templates/traefik-values.yml.j2"
         dest: /tmp/traefik-values.yml
 
     - name: Add Traefik Helm repository
@@ -38,3 +16,10 @@
     - name: Install Traefik Helm chart
       shell: |
         helm install traefik traefik/traefik -f /tmp/traefik-values.yml
+
+    - name: Wait for Traefik to be running
+      shell: kubectl get pods -n kube-system -l app.kubernetes.io/name=traefik -o jsonpath="{.items[0].status.phase}"
+      register: traefik_status
+      until: traefik_status.stdout == "Running"
+      retries: 10
+      delay: 15

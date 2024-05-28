@@ -1,6 +1,6 @@
 ### REQUIRED
 namespace: cto
-name: rke2_ansible
+name: rke2_ha_stack
 version: 1.0.0
 readme: README.md
 authors:
@@ -32,5 +32,5 @@ dependencies:
   community.general: '*'
   kubernetes.core: '*'
 
-repository: https://github.com/imaginestack/collections/rke2-ansible
-documentation: https://github.com/imaginestack/collections/rke2-ansible
+repository: https://github.com/imaginestack/rke2-ha-stack
+documentation: https://github.com/imaginestack/rke2-ha-stack

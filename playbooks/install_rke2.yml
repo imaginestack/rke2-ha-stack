@@ -37,3 +37,6 @@
       shell: |
         curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE='server' sh -
         echo "server: https://{{ hostvars[groups['masters'][0]]['ansible_host'] }}:9345" > /etc/rancher
+
+# cni: "cilium"
+# disable-kube-proxy: true

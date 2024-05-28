@@ -33,3 +33,6 @@ kube_vip_version: "v0.8.0"
 metal_lb_speaker_tag_version: "v0.14.4"
 metal_lb_controller_tag_version: "v0.14.4"
 metal_lb_ip_range: "192.168.10.50-192.168.10.60"
+
+letsencrypt_email: "your-email@example.com"
+htpasswd_hash: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters,digits') }}"

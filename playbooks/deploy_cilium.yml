@@ -3,7 +3,20 @@
   hosts: masters
   become: true
   tasks:
-    - name: Deploy Cilium
-      shell: |
-        kubectl apply -f https://raw.githubusercontent.com/cilium/cilium/v{{ cilium_tag }}/install/kubernetes/quick-install.yaml
+    - name: Create Cilium values file
+      template:
+        src: "{{ playbook_dir }}/roles/deploy_cilium/templates/cilium-values.yml.j2"
+        dest: /tmp/cilium-values.yml
 
+    - name: Install Cilium
+      shell: |
+        kubectl create -f https://raw.githubusercontent.com/cilium/cilium/{{ cilium_tag }}/install/kubernetes/quick-install.yaml
+      args:
+        creates: /var/lib/rancher/rke2/bin/cilium
+
+    - name: Wait for Cilium to be running
+      shell: kubectl get pods -n kube-system -l k8s-app=cilium -o jsonpath="{.items[0].status.phase}"
+      register: cilium_status
+      until: cilium_status.stdout == "Running"
+      retries: 10
+      delay: 15
