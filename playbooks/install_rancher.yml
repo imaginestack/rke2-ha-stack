@@ -1,0 +1,30 @@
+---
+- name: Install Rancher Server
+  hosts: masters
+  become: true
+  tasks:
+    - name: Add Helm repository for Rancher
+      command:
+        cmd: helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
+      changed_when: true
+
+    - name: Update Helm repositories
+      command:
+        cmd: helm repo update
+      changed_when: true
+
+    - name: Install Cert-Manager
+      command:
+        cmd: |
+          kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.5.3/cert-manager.crds.yaml
+          helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace
+      changed_when: true
+
+    - name: Install Rancher
+      command:
+        cmd: helm install rancher rancher-latest/rancher \
+          --namespace cattle-system \
+          --set hostname=dash.imaginestack.net \
+          --set ingress.tls.source=letsEncrypt \
+          --set letsEncrypt.email={{ letsencrypt_email }}
+      changed_when: true

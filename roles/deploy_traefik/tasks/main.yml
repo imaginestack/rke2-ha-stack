@@ -112,4 +112,5 @@
 - name: Clean up traefik tmp dir
   file:
     path: /tmp/traefik/
-    state: absent 
+    state: absent
+---

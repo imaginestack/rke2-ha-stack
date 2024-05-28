@@ -11,6 +11,21 @@
       args:
         creates: /usr/local/bin/rke2
 
+    - name: Configure RKE2
+      copy:
+        dest: /etc/rancher/rke2/config.yaml
+        content: |
+          token: my-secret-token
+          write-kubeconfig-mode: "0644"
+          disable:
+            - rke2-kube-proxy
+          cni: cilium
+
+    - name: Restart RKE2 server
+      systemd:
+        name: rke2-server
+        state: restarted
+
     - name: Configure kubeconfig
       copy:
         content: |
@@ -36,7 +51,6 @@
     - name: Join master nodes to the cluster
       shell: |
         curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE='server' sh -
-        echo "server: https://{{ hostvars[groups['masters'][0]]['ansible_host'] }}:9345" > /etc/rancher
-
-# cni: "cilium"
-# disable-kube-proxy: true
+        echo "server: https://{{ hostvars[groups['masters'][0]]['ansible_host'] }}:9345" > /etc/rancher/rke2/rke2.yaml
+        systemctl enable rke2-server
+        systemctl start rke2-server

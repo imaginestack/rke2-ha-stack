@@ -68,6 +68,23 @@
     - role: deploy_cert_manager
       become: true
 
+- name: Deploy Rancher
+  hosts: masters
+  become: true
+  tasks:
+    - name: Add Rancher Helm repository
+      shell: |
+        helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
+        helm repo update
+
+    - name: Install Rancher
+      shell: |
+        helm install rancher rancher-latest/rancher \
+          --namespace cattle-system \
+          --set hostname=dash.imaginestack.net \
+          --set ingress.tls.source=letsEncrypt \
+          --set letsEncrypt.email={{ letsencrypt_email }}
+
 - name: Verify RKE2 Cluster
   hosts: all
   tasks:
