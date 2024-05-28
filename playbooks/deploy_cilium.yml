@@ -10,9 +10,9 @@
 
     - name: Install Cilium
       shell: |
-        kubectl create -f https://raw.githubusercontent.com/cilium/cilium/{{ cilium_tag }}/install/kubernetes/quick-install.yaml
-      args:
-        creates: /var/lib/rancher/rke2/bin/cilium
+        helm repo add cilium https://helm.cilium.io/
+        helm repo update
+        helm install cilium cilium/cilium -f /tmp/cilium-values.yml --namespace kube-system
 
     - name: Wait for Cilium to be running
       shell: kubectl get pods -n kube-system -l k8s-app=cilium -o jsonpath="{.items[0].status.phase}"
