@@ -18,19 +18,15 @@
   hosts: masters
   roles:
     - role: deploy_kube_vip
-      become: true
 
 - name: Deploy MetalLB
   hosts: masters
   roles:
     - role: deploy_metallb
-      become: true
 
 - name: Deploy Cilium
   hosts: masters
-  roles:
-    - role: deploy_cilium
-      become: true
+  become: true
 
 - name: Install Helm
   hosts: masters
@@ -60,13 +56,10 @@
   hosts: masters
   roles:
     - role: deploy_traefik
-      become: true
 
 - name: Deploy Cert-Manager
   hosts: masters
-  roles:
-    - role: deploy_cert_manager
-      become: true
+  become: true
 
 - name: Deploy Rancher
   hosts: masters
