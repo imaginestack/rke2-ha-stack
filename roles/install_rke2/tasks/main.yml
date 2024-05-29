@@ -1,31 +1,45 @@
 ---
-- name: Install RKE2 on master nodes
-  shell: |
-    curl -sfL https://get.rke2.io | sh -
-    systemctl enable rke2-server
-    systemctl start rke2-server
-  args:
-    creates: /usr/local/bin/rke2
+- name: Install RKE2
+  become: true
+  script: /tmp/rke2_install.sh
 
-- name: Configure kubeconfig
-  copy:
-    content: |
-      export KUBECONFIG=/etc/rancher/rke2/rke2.yaml
-      alias kubectl='kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml'
-    dest: /etc/profile.d/kubeconfig.sh
+- name: Enable RKE2 server
+  become: true
+  service:
+    name: rke2-server
+    enabled: yes
+
+- name: Start RKE2 server
+  become: true
+  service:
+    name: rke2-server
+    state: started
+
+- name: Ensure /etc/rancher/rke2 directory exists and is writable
+  become: true
+  file:
+    path: /etc/rancher/rke2
+    state: directory
+    owner: cto
+    group: cto
     mode: '0755'
 
-- name: Retrieve cluster token
-  command: cat /var/lib/rancher/rke2/server/token
-  register: cluster_token
-  delegate_to: "{{ groups['masters'][0] }}"
-  run_once: true
+- name: Configure RKE2
+  become: true
+  copy:
+    content: |
+      write your RKE2 configuration here
+    dest: /etc/rancher/rke2/config.yaml
+    owner: cto
+    group: cto
+    mode: '0644'
 
-- name: Join other masters to the cluster
-  shell: |
-    curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE='server' sh -
-    echo "server: https://{{ hostvars[groups['masters'][0]]['ansible_host'] }}:9345" > /etc/rancher/rke2/config.yaml
-    echo "token: {{ cluster_token.stdout }}" >> /etc/rancher/rke2/config.yaml
-    systemctl enable rke2-server
-    systemctl start rke2-server
-  when: inventory_hostname != groups['masters'][0]
+- name: Create kubeconfig file
+  become: true
+  copy:
+    content: |
+      write your kubeconfig content here
+    dest: /etc/rancher/rke2/rke2.yaml
+    owner: cto
+    group: cto
+    mode: '0644'

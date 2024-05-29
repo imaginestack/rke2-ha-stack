@@ -64,7 +64,7 @@
     cmd: "helm repo update"
   changed_when: true
 
-- name: wait for k3s API server VIP {{ apiserver_endpoint }} to be available
+- name: wait for rke2 API server VIP {{ apiserver_endpoint }} to be available
   wait_for:
     host: "{{ apiserver_endpoint }}"
     port: 6443
@@ -113,4 +113,41 @@
   file:
     path: /tmp/traefik/
     state: absent
----
+
+# - name: Wait for traefik pods to be ready
+#   command:
+#     cmd: "kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=traefik --timeout=300s --namespace=traefik"
+#   changed_when: true
+
+# - name: Wait for traefik dashboard pods to be ready
+#   command:
+#     cmd: "kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=traefik-dashboard --timeout=300s --namespace=traefik"
+#   changed_when: true
+
+# - name: Wait for traefik internal dashboard pods to be ready
+#   command:
+#     cmd: "kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=traefik-internal-dashboard --timeout=300s --namespace=traefik"
+#   changed_when: true
+
+# - name: Wait for traefik external dashboard pods to be ready
+#   command:
+#     cmd: "kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=traefik-external-dashboard --timeout=300s --namespace=traefik"
+#   changed_when: true
+
+# - name: Wait for traefik external dashboard service to be ready
+#   command:
+#     cmd: "kubectl wait --for=condition=ready service -l app.kubernetes.io/name=traefik-external-dashboard --timeout=300s --namespace=traefik"
+#   changed_when: true
+
+# - name: Wait for traefik internal dashboard service to be ready
+#   command:
+#     cmd: "kubectl wait --for=condition=ready service -l app.kubernetes.io/name=traefik-internal-dashboard --timeout=300s --namespace=traefik"
+#   changed_when: true
+
+# - name: Wait for traefik dashboard service to be ready
+#   command:
+#     cmd: "kubectl wait --for=condition=ready service -l app.kubernetes.io/name=traefik-dashboard --timeout=300s --namespace=traefik"
+#   changed_when: true
+
+
+

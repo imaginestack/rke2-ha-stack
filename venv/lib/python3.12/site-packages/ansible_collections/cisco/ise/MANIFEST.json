@@ -1,0 +1,39 @@
+{
+ "collection_info": {
+  "namespace": "cisco",
+  "name": "ise",
+  "version": "2.9.1",
+  "authors": [
+   "Rafael Campos <rcampos@altus.cr>",
+   "William Astorga <wastorga@altus.cr>",
+   "Jose Bogarin <jbogarin@altus.cr>"
+  ],
+  "readme": "README.md",
+  "tags": [
+   "cisco",
+   "ise",
+   "cloud",
+   "collection",
+   "networking",
+   "sdn"
+  ],
+  "description": "Ansible Modules for Cisco ISE",
+  "license": [],
+  "license_file": "LICENSE",
+  "dependencies": {
+   "ansible.utils": ">=2.0.0,<5.0"
+  },
+  "repository": "https://github.com/CiscoISE/ansible-ise",
+  "documentation": "https://ciscoise.github.io/ansible-ise/",
+  "homepage": "https://github.com/CiscoISE/ansible-ise",
+  "issues": "https://github.com/CiscoISE/ansible-ise/issues"
+ },
+ "file_manifest_file": {
+  "name": "FILES.json",
+  "ftype": "file",
+  "chksum_type": "sha256",
+  "chksum_sha256": "15f432db63325689f8870dba08698116fcf594e05eaa83c4029245933f588784",
+  "format": 1
+ },
+ "format": 1
+}

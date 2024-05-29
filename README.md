@@ -68,9 +68,9 @@ cp -R inventory/sample inventory/my-cluster
 
 ```
 [masters]
-master1 ansible_host=192.168.10.31
-master2 ansible_host=192.168.10.32
-master3 ansible_host=192.168.10.33
+192.168.10.31
+192.168.10.32
+192.168.10.33
 
 [rke2_cluster:children]
 masters
