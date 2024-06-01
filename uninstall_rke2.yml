@@ -1,0 +1,49 @@
+- name: Uninstall RKE2 and clean up
+  hosts: all
+  become: yes
+  tasks:
+    - name: Stop RKE2 services
+      systemd:
+        name: "{{ item }}"
+        state: stopped
+        enabled: no
+      with_items:
+        - rke2-server
+        - rke2-agent
+      ignore_errors: yes
+
+    - name: Remove RKE2 binaries
+      file:
+        path: /usr/local/bin/rke2
+        state: absent
+      ignore_errors: yes
+
+    - name: Remove RKE2 data directory
+      file:
+        path: /var/lib/rancher/rke2
+        state: absent
+        recurse: yes
+      ignore_errors: yes
+
+    - name: Remove RKE2 config directory
+      file:
+        path: /etc/rancher/rke2
+        state: absent
+        recurse: yes
+      ignore_errors: yes
+
+    - name: Remove RKE2 service file
+      file:
+        path: /etc/systemd/system/rke2-server.service
+        state: absent
+      ignore_errors: yes
+
+    - name: Remove RKE2 agent service file
+      file:
+        path: /etc/systemd/system/rke2-agent.service
+        state: absent
+      ignore_errors: yes
+
+    - name: Reload systemd
+      command: systemctl daemon-reload
+      ignore_errors: yes

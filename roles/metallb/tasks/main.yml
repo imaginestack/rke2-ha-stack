@@ -1,0 +1,16 @@
+- name: Install MetalLB
+  shell: |
+    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/{{ metallb_version }}/manifests/namespace.yaml
+    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/{{ metallb_version }}/manifests/metallb.yaml
+    kubectl create secret generic memberlist -n metallb-system --from-literal=secretkey="$(openssl rand -base64 128)"
+  become: true
+
+- name: Configure MetalLB
+  template:
+    src: metallb-config.yaml.j2
+    dest: /etc/metallb/config.yaml
+  become: true
+
+- name: Apply MetalLB configuration
+  shell: kubectl apply -f /etc/metallb/config.yaml
+  become: true

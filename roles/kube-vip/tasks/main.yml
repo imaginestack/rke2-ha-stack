@@ -1,0 +1,16 @@
+- name: Download kube-vip
+  get_url:
+    url: https://github.com/kube-vip/kube-vip/releases/download/{{ kube_vip_version }}/kube-vip-{{ kube_vip_version }}-linux-amd64
+    dest: /usr/local/bin/kube-vip
+    mode: '0755'
+  become: true
+
+- name: Install kube-vip as a DaemonSet
+  shell: |
+    export VIP={{ vip_address }}
+    export INTERFACE={{ interface }}
+    /usr/local/bin/kube-vip manifest daemonset \
+      --arp \
+      --interface $INTERFACE \
+      --address $VIP | kubectl apply -f -
+  become: true

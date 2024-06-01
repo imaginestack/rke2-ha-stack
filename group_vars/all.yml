@@ -1,0 +1,26 @@
+# group_vars/all.yml
+---
+rke2_version: "v1.30.1+rke2r1"
+kube_vip_version: "v0.3.7"
+rke2_token: "{{ lookup('password', '/tmp/rke2_token') }}"
+rke2_servers_group_name: "masters"
+rke2_ha_mode: true
+rke2_ha_mode_keepalived: false
+rke2_ha_mode_kubevip: true
+rke2_kubevip_ipvs_lb_enable: true
+cilium_version: "v1.11.5"
+metallb_version: "v0.11.0"
+traefik_version: "2.5.4"
+vip_address: "192.168.10.77"
+interface: "eth0"
+
+rke2_api_ip: "192.168.10.77"
+rke2_additional_sans:
+  - "192.168.10.31"
+  - "192.168.10.32"
+  - "192.168.10.33"
+  - "192.168.10.77"
+rke2_disable:
+  - rke2-canal
+metallb_range: "192.168.10.60-70"
+

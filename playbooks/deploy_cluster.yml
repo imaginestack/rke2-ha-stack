@@ -1,0 +1,40 @@
+- hosts: all
+  become: true
+  roles:
+    - role: lablabs.rke2
+  tasks:
+    - name: Install RKE2 on all nodes
+      include_role:
+        name: lablabs.rke2
+
+- hosts: masters[0]
+  become: true
+  vars:
+    is_first_master: true
+  tasks:
+    - name: Initialize first master node
+      include_role:
+        name: rke2_master
+    - name: Deploy kube-vip
+      include_role:
+        name: kube-vip
+      when: is_first_master
+
+- hosts: all:!masters[0]
+  become: true
+  tasks:
+    - name: Join additional nodes to the cluster
+      include_role:
+        name: rke2_node
+      vars:
+        join_cluster: true
+
+- hosts: all
+  become: true
+  tasks:
+    - name: Deploy Cilium
+      include_role:
+        name: cilium
+    - name: Deploy MetalLB
+      include_role:
+        name: metallb

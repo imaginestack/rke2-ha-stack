@@ -1,0 +1,13 @@
+- name: Install Cilium CLI
+  get_url:
+    url: https://github.com/cilium/cilium-cli/releases/download/{{ cilium_version }}/cilium-linux-amd64.tar.gz
+    dest: /usr/local/bin/cilium
+    mode: '0755'
+  become: true
+
+- name: Install Cilium
+  shell: |
+    cilium install
+    cilium status --wait
+  become: true
+
