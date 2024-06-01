@@ -1,109 +1,49 @@
----
-
-- name: Get stats of the FS object
-  ansible.builtin.stat:
-    path: /usr/local
-  register: usr_local
-
-- name: Set RKE2 bin path
-  ansible.builtin.set_fact:
-    rke2_bin_path: "{{ '/usr/local/bin/rke2' if usr_local.stat.writeable == True else '/opt/rke2/bin/rke2' }}"
-  when: usr_local.stat.exists
-
-- name: Debug RKE2 bin path
-  ansible.builtin.debug:
-    var: rke2_bin_path
-
-- name: Check RKE2 version
-  ansible.builtin.shell: |
-    #!/bin/bash
-    set -euo pipefail
-
-    rke2_bin_path="{{ rke2_bin_path }}"
-    rke2_service_name="{{ rke2_service_name }}"
-    rke2_version="{{ rke2_version }}"
-
-    if [ -f "$rke2_bin_path" ]; then
-      installed_version="$($rke2_bin_path --version | grep -E 'rke2 version' | awk '{print $3}')"
-    else
-      installed_version="not installed"
-    fi
-
-    if systemctl is-active --quiet $rke2_service_name && rke2_service_pid=$(systemctl show $rke2_service_name --property MainPID --value); then
-      rke2_bin_path="$(realpath "/proc/$rke2_service_pid/exe")"
-    fi
-
-    # Linux appends the target of removed proc exe with ' (deleted)', making the path unavailable.
-    if [ -f "$rke2_bin_path" ]; then
-      running_version="$($rke2_bin_path --version | grep -E 'rke2 version' | awk '{print $3}')"
-    elif [ "$installed_version" = "not installed" ]; then
-      running_version="$rke2_version"
-    else
-      running_version="outdated"
-    fi
-
-    echo "{\"installed_version\":\"$installed_version\",\"running_version\":\"$running_version\"}"
+- name: Download and install RKE2
+  shell: |
+    curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION={{ rke2_version }} sh -
   args:
-    executable: /bin/bash
-  changed_when: false
-  register: versions_check
+    creates: /usr/local/bin/rke2
 
-- name: Debug version check
-  ansible.builtin.debug:
-    var: versions_check
+- name: Enable and start RKE2 server
+  systemd:
+    name: rke2-server
+    enabled: yes
+    state: started
 
-- name: Set RKE2 versions
-  ansible.builtin.set_fact:
-    installed_version: "{{ versions.installed_version }}"
-    running_version: "{{ versions.running_version }}"
-  vars:
-    versions: "{{ versions_check.stdout | from_json }}"
+- name: Ensure kubeconfig file is created
+  shell: |
+    mkdir -p /etc/rancher/rke2
+    /usr/local/bin/rke2 server --write-kubeconfig-mode 644 --write-kubeconfig /etc/rancher/rke2/rke2.yaml
+  args:
+    creates: /etc/rancher/rke2/rke2.yaml
 
-- name: Run AirGap RKE2 script
-  ansible.builtin.command:
-    cmd: "{{ rke2_install_script_dir }}/rke2.sh"
-  environment:
-    INSTALL_RKE2_ARTIFACT_PATH: "{{ rke2_artifact_path }}"
-    INSTALL_RKE2_AGENT_IMAGES_DIR: "{{ rke2_data_path }}/agent/images"
-  changed_when: false
-  when: rke2_version != installed_version and rke2_airgap_mode
+- name: Set permissions for kubeconfig file
+  file:
+    path: /etc/rancher/rke2/rke2.yaml
+    mode: '0644'
 
-- name: Run RKE2 script
-  ansible.builtin.command:
-    cmd: "{{ rke2_install_script_dir }}/rke2.sh"
-  environment:
-    INSTALL_RKE2_VERSION: "{{ rke2_version }}"
-    INSTALL_RKE2_CHANNEL_URL: "{{ rke2_channel_url }}"
-    INSTALL_RKE2_CHANNEL: "{{ rke2_channel }}"
-    INSTALL_RKE2_METHOD: "{{ rke2_method }}"
-  changed_when: false
-  when: rke2_version != installed_version and not rke2_airgap_mode
+- name: Copy kubeconfig to default location
+  shell: |
+    mkdir -p $HOME/.kube
+    cp /etc/rancher/rke2/rke2.yaml $HOME/.kube/config
+    chown $(id -u):$(id -g) $HOME/.kube/config
+  when: ansible_user == 'cto'
 
-- name: Copy Custom Manifests
-  ansible.builtin.template:
-    src: "{{ item }}"
-    dest: "{{ rke2_data_path }}/server/manifests/"
-    owner: root
-    group: root
-    mode: 0644
-  with_items: "{{ rke2_custom_manifests }}"
-  when: rke2_custom_manifests
+- name: Add k8s_cluster annotation to services
+  kubernetes.core.k8s_info:
+    kind: Service
+    namespace: kube-system
+  register: k8s_services
 
-- name: Copy Static Pods
-  ansible.builtin.copy:
-    src: "{{ item }}"
-    dest: "{{ rke2_data_path }}/agent/pod-manifests/"
-    owner: root
-    group: root
-    mode: 0644
-  with_items: "{{ rke2_static_pods }}"
-  when: rke2_static_pods
-
-- name: Copy RKE2 environment file
-  ansible.builtin.template:
-    src: rke2_environment.j2
-    dest: "/etc/default/rke2-{{ rke2_type }}"
-    owner: root
-    group: root
-    mode: 0644
-  when: rke2_environment_options is defined and rke2_environment_options|length > 0
+- name: Annotate Kubernetes services with k8s_cluster
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: "{{ item.metadata.name }}"
+        namespace: kube-system
+        annotations:
+          k8s_cluster: "{{ rke2_api_ip }}"
+  with_items: "{{ k8s_services.resources }}"
+  when: item.metadata.annotations.k8s_cluster is not defined

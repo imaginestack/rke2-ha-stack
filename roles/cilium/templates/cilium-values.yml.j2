@@ -1,8 +1,14 @@
-k8sServiceHost: "{{ apiserver_endpoint }}"
-k8sServicePort: 6443
-kubeProxyReplacement: strict
-hostServices:
+# cilium-values.yml.j2
+image:
+  tag: {{ cilium_version }}
+
+cni:
+  install: true
+
+hubble:
   enabled: true
-  protocols: TCP
-  interfaces:
-    - "{{ cilium_iface }}"
+  relay:
+    enabled: true
+  ui:
+    enabled: true
+

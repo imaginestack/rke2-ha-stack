@@ -1,16 +1,28 @@
-- name: Download kube-vip
-  get_url:
-    url: https://github.com/kube-vip/kube-vip/releases/download/{{ kube_vip_version }}/kube-vip-{{ kube_vip_version }}-linux-amd64
-    dest: /usr/local/bin/kube-vip
+---
+- name: Create manifests directory
+  ansible.builtin.file:
+    path: /etc/kubernetes/manifests
+    state: directory
     mode: '0755'
-  become: true
 
-- name: Install kube-vip as a DaemonSet
-  shell: |
-    export VIP={{ vip_address }}
-    export INTERFACE={{ interface }}
-    /usr/local/bin/kube-vip manifest daemonset \
-      --arp \
-      --interface $INTERFACE \
-      --address $VIP | kubectl apply -f -
-  become: true
+- name: Create kube-vip ConfigMap
+  ansible.builtin.template:
+    src: kube-vip-config.j2
+    dest: /etc/kubernetes/manifests/kube-vip-config.yaml
+
+- name: Apply kube-vip ConfigMap
+  ansible.builtin.shell: kubectl apply -f /etc/kubernetes/manifests/kube-vip-config.yaml
+  args:
+    executable: /bin/bash
+
+- name: Create kube-vip DaemonSet
+  ansible.builtin.template:
+    src: kube-vip-daemonset.yml.j2
+    dest: /etc/kubernetes/manifests/kube-vip-daemonset.yaml
+
+- name: Apply Kube-vip DaemonSet
+  ansible.builtin.shell: kubectl apply -f /etc/kubernetes/manifests/kube-vip-daemonset.yaml
+  args:
+    executable: /bin/bash
+
+

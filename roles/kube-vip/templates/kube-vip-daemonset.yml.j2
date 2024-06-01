@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kube-vip-ds
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      name: kube-vip-ds
+  template:
+    metadata:
+      labels:
+        name: kube-vip-ds
+    spec:
+      containers:
+      - name: kube-vip
+        image: plndr/kube-vip:{{ kube_vip_version }}
+        env:
+        - name: vip_arp
+          value: "true"
+        - name: vip_interface
+          value: {{ interface }}
+        - name: vip_cidr
+          value: "32"
+        - name: cp_enable
+          value: "true"
+        - name: cp_namespace
+          value: "kube-system"
+        - name: svc_enable
+          value: "true"
+        securityContext:
+          capabilities:
+            add:
+              - NET_ADMIN
+              - SYS_TIME
+        volumeMounts:
+          - name: kube-vip-config
+            mountPath: /etc/kubernetes/manifests/kube-vip.yaml
+            subPath: kube-vip.yaml
+      hostNetwork: true
+      volumes:
+        - name: kube-vip-config
+          configMap:
+            name: kube-vip
+

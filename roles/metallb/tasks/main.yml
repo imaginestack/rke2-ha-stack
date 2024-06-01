@@ -1,16 +1,22 @@
-- name: Install MetalLB
-  shell: |
-    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/{{ metallb_version }}/manifests/namespace.yaml
-    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/{{ metallb_version }}/manifests/metallb.yaml
-    kubectl create secret generic memberlist -n metallb-system --from-literal=secretkey="$(openssl rand -base64 128)"
-  become: true
+---
+- name: Create MetalLB config directory
+  ansible.builtin.file:
+    path: /etc/metallb
+    state: directory
 
-- name: Configure MetalLB
-  template:
+- name: Install MetalLB
+  ansible.builtin.shell: |
+    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/{{ metallb_version }}/config/manifests/metallb-native.yaml
+    kubectl create secret generic memberlist -n metallb-system --from-literal=secretkey="$(openssl rand -base64 128)"
+  args:
+    executable: /bin/bash
+
+- name: Copy MetalLB config file
+  ansible.builtin.template:
     src: metallb-config.yaml.j2
     dest: /etc/metallb/config.yaml
-  become: true
 
 - name: Apply MetalLB configuration
-  shell: kubectl apply -f /etc/metallb/config.yaml
-  become: true
+  ansible.builtin.shell: kubectl apply -f /etc/metallb/config.yaml
+  args:
+    executable: /bin/bash

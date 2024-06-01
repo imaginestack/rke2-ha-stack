@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cilium-config
+  namespace: kube-system
+data:
+  cni-config: |-
+    {
+      "cniVersion": "0.3.1",
+      "name": "cilium",
+      "type": "cilium-cni"
+    }
+  custom-config: |
+    [cni]
+    install=true
+    [hubble]
+    enabled=true
+    relay.enabled=true
+    ui.enabled=true
