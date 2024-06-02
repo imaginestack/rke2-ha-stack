@@ -1,23 +1,102 @@
 ---
+# v1.0.0: Initial version
+# Download and install RKE2
 - name: Download and install RKE2
-  ansible.builtin.shell: curl -sfL https://get.rke2.io | sh -
+  ansible.builtin.shell: curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE="server" sh -
+  args:
+    creates: /usr/local/bin/rke2
 
+# v1.1.0: Added task to set executable permissions for RKE2 binary
+# Set executable permissions for RKE2 binary
+- name: Set executable permissions for RKE2 binary
+  ansible.builtin.file:
+    path: /usr/local/bin/rke2
+    mode: '0755'
+    state: file
+
+# v1.2.0: Ensure systemd service file for RKE2 is present
+# Ensure systemd service file for RKE2 is present
+- name: Ensure systemd service file for RKE2 is present
+  ansible.builtin.copy:
+    dest: /usr/local/lib/systemd/system/rke2-server.service
+    content: |
+      [Unit]
+      Description=Rancher Kubernetes Engine v2 (server)
+      Documentation=https://github.com/rancher/rke2#readme
+      Wants=network-online.target
+      After=network-online.target
+      Conflicts=rke2-agent.service
+
+      [Install]
+      WantedBy=multi-user.target
+
+      [Service]
+      Type=notify
+      EnvironmentFile=-/etc/default/%N
+      EnvironmentFile=-/etc/sysconfig/%N
+      EnvironmentFile=-/usr/local/lib/systemd/system/%N.env
+      KillMode=process
+      Delegate=yes
+      LimitNOFILE=1048576
+      LimitNPROC=infinity
+      LimitCORE=infinity
+      TasksMax=infinity
+      TimeoutStartSec=0
+      Restart=always
+      RestartSec=5s
+      ExecStartPre=/bin/sh -xc '! /usr/bin/systemctl is-enabled --quiet nm-cloud-setup.service'
+      ExecStartPre=-/sbin/modprobe br_netfilter
+      ExecStartPre=-/sbin/modprobe overlay
+      ExecStart=/usr/local/bin/rke2 server
+      ExecStopPost=-/bin/sh -c "systemd-cgls /system.slice/%n | grep -Eo '[0-9]+ (containerd|kubelet)' | awk '{print $1}' | xargs -r kill"
+    owner: root
+    group: root
+    mode: '0644'
+
+# v1.2.1: Reload systemd daemon to apply changes
+# Reload systemd daemon
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+# v1.0.0: Initial version
+# Enable and start RKE2 server
 - name: Enable and start RKE2 server
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: rke2-server
     state: started
     enabled: yes
 
+# v1.0.0: Initial version
+# Ensure kubeconfig file is created
 - name: Ensure kubeconfig file is created
   ansible.builtin.wait_for:
     path: /etc/rancher/rke2/rke2.yaml
     timeout: 300
 
+# v1.0.0: Initial version
+# Verify kubeconfig file existence
+- name: Verify kubeconfig file existence
+  ansible.builtin.stat:
+    path: /etc/rancher/rke2/rke2.yaml
+  register: kubeconfig_stat
+
+# v1.0.0: Initial version
+# Fail if kubeconfig file is not found
+- name: Fail if kubeconfig file is not found
+  ansible.builtin.fail:
+    msg: "Kubeconfig file not found!"
+  when: not kubeconfig_stat.stat.exists
+
+# v1.0.0: Initial version
+# Set permissions for kubeconfig file
 - name: Set permissions for kubeconfig file
   ansible.builtin.file:
     path: /etc/rancher/rke2/rke2.yaml
     mode: '0644'
 
+# v1.0.0: Initial version
+# Copy kubeconfig to default location
 - name: Copy kubeconfig to default location
   ansible.builtin.copy:
     src: /etc/rancher/rke2/rke2.yaml
@@ -26,7 +105,10 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: '0644'
+    backup: yes
 
+# v1.0.0: Initial version
+# Add k8s_cluster annotation to services
 - name: Add k8s_cluster annotation to services
   vars:
     ansible_python_interpreter: /opt/ansible_venv/bin/python
@@ -35,6 +117,8 @@
     namespace: kube-system
   register: services
 
+# v1.0.0: Initial version
+# Patch services with k8s_cluster annotation
 - name: Patch services with k8s_cluster annotation
   vars:
     ansible_python_interpreter: /opt/ansible_venv/bin/python
