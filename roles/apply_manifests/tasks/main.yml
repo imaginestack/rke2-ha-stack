@@ -1,0 +1,48 @@
+---
+# Create directory for Cilium manifests
+- name: Create directory for Cilium manifests
+  ansible.builtin.file:
+    path: /etc/cilium
+    state: directory
+    mode: '0755'
+
+# Install Helm
+- name: Install Helm
+  ansible.builtin.command:
+    cmd: curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+  changed_when: true
+
+# Add Cilium Helm repository
+- name: Add Cilium Helm repository
+  ansible.builtin.command:
+    cmd: helm repo add cilium https://helm.cilium.io/
+  changed_when: true
+
+# Update Helm repositories
+- name: Update Helm repositories
+  ansible.builtin.command:
+    cmd: helm repo update
+  changed_when: true
+
+# Copy Cilium values file
+- name: Copy Cilium values file
+  ansible.builtin.template:
+    src: templates/cilium-values.yml.j2
+    dest: /etc/cilium/cilium-values.yml
+    mode: '0644'
+
+# Ensure previous Cilium installation is removed
+- name: Ensure previous Cilium installation is removed
+  ansible.builtin.command:
+    cmd: helm uninstall cilium -n kube-system
+  ignore_errors: true
+
+# Install Cilium via Helm
+- name: Install Cilium via Helm
+  ansible.builtin.command:
+    cmd: helm install cilium cilium/cilium --version "{{ cilium_version }}" -n kube-system --create-namespace --values /etc/cilium/cilium-values.yml --kubeconfig /etc/rancher/rke2/rke2.yaml --insecure-skip-tls-verify=true
+  retries: 3
+  delay: 10
+  register: cilium_install
+  until: cilium_install.rc == 0
+  changed_when: true

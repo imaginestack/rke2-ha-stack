@@ -1,0 +1,48 @@
+---
+# Create directory to deploy kube-vip manifest
+- name: Create directory for Kube VIP Manifest
+  ansible.builtin.file:
+    path: "/var/lib/rancher/rke2/server/manifests"
+    state: directory
+    mode: '0644'
+  when: inventory_hostname in groups['control_plane']
+
+# Deploy Kube VIP Configuration
+- name: Deploy Kube VIP Configuration
+  ansible.builtin.template:
+    src: templates/kube-vip-config.j2
+    dest: /var/lib/rancher/rke2/server/manifests/kube-vip.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  when: inventory_hostname == groups['control_plane'][0]
+
+# Ensure Kube-VIP service account
+- name: Ensure Kube-VIP service account
+  ansible.builtin.command:
+    cmd: kubectl apply -f https://kube-vip.io/manifests/rbac.yaml --validate=false --insecure-skip-tls-verify
+  changed_when: true
+  when: inventory_hostname == groups['control_plane'][0]
+
+# Verify Kube-VIP pods are running
+- name: Verify Kube-VIP pods are running
+  ansible.builtin.command:
+    cmd: kubectl --kubeconfig /home/{{ ansible_user }}/.kube/config get pods -n kube-system -l app.kubernetes.io/name=kube-vip --insecure-skip-tls-verify=true
+  register: kube_vip_pods
+  until: kube_vip_pods.stdout.find('Running') != -1
+  retries: 12
+  delay: 10
+  changed_when: false
+  when: inventory_hostname == groups['control_plane'][0]
+
+# Print kubeconfig for debugging
+- name: Print kubeconfig for debugging
+  debug:
+    msg: "{{ lookup('file', '/home/{{ ansible_user }}/.kube/config') }}"
+  when: inventory_hostname == groups['control_plane'][0]
+
+# Print CA certificate for debugging
+- name: Print CA certificate for debugging
+  debug:
+    msg: "{{ lookup('file', '/var/lib/rancher/rke2/server/tls/server-ca.crt') }}"
+  when: inventory_hostname == groups['control_plane'][0]

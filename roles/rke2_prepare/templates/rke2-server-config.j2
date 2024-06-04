@@ -1,0 +1,15 @@
+write-kubeconfig-mode: "0644"
+token: {{ rke2_token }}
+server: https://{{ rke2_api_ip }}:9345
+tls-san:
+  - {{ vip_address }}
+  - {{ hostvars['dash']['ansible_host'] }}
+  - {{ hostvars['rke2']['ansible_host'] }}
+  - {{ hostvars['rke3']['ansible_host'] }}
+node-label:
+  - server=true
+disable:
+  - rke2-ingress-nginx
+cni:
+  - cilium
+disable-kube-proxy: true

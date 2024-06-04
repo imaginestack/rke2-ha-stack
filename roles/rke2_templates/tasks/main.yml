@@ -108,6 +108,13 @@
     backup: yes
 
 # v1.0.0: Initial version
+# Verify RKE2 cluster status
+- name: Verify RKE2 cluster status
+  ansible.builtin.command: kubectl get nodes
+  register: node_status
+  failed_when: "'Ready' not in node_status.stdout"
+
+# v1.0.0: Initial version
 # Add k8s_cluster annotation to services
 - name: Add k8s_cluster annotation to services
   vars:

@@ -1,0 +1,55 @@
+---
+# Prepare Nodes for RKE2
+
+# Enable IPv4 forwarding
+- name: Enable IPv4 forwarding
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    state: present
+    reload: true
+  tags: sysctl
+
+# Enable IPv6 forwarding
+- name: Enable IPv6 forwarding
+  ansible.posix.sysctl:
+    name: net.ipv6.conf.all.forwarding
+    value: "1"
+    state: present
+    reload: true
+  tags: sysctl
+
+# Install required packages on Debian-based systems
+- name: Install packages on Debian-based systems
+  ansible.builtin.apt:
+    name:
+      - iproute2
+      - ipset
+      - curl
+      - wget
+      - python3-pip
+      - python3-venv
+    state: present
+  when: ansible_facts['os_family'] == 'Debian'
+
+# Install required packages on RedHat-based systems
+- name: Install packages on RedHat-based systems
+  ansible.builtin.yum:
+    name:
+      - iproute
+      - ipset
+      - curl
+      - wget
+      - python3-pip
+    state: present
+  when: ansible_facts['os_family'] == 'RedHat'
+
+# Create virtual environment for Ansible
+- name: Create virtual environment
+  ansible.builtin.command: python3 -m venv /opt/ansible_venv
+  when: ansible_facts['os_family'] == 'Debian' or ansible_facts['os_family'] == 'RedHat'
+
+# Install kubernetes Python package in virtual environment
+- name: Install kubernetes Python package in virtual environment
+  ansible.builtin.command: /opt/ansible_venv/bin/pip install kubernetes
+  when: ansible_facts['os_family'] == 'Debian' or ansible_facts['os_family'] == 'RedHat'

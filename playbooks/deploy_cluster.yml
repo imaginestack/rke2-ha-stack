@@ -1,46 +1,33 @@
 ---
-- name: Deploy RKE2, Cilium, Kube-VIP, and MetalLB
+- name: Prepare Nodes
   hosts: all
   become: true
+  vars_files:
+    - inventories/hosts.yml
+  roles:
+    - role: prepare_nodes
+
+- name: Debug Variables
+  hosts: all
   tasks:
-    - name: Install dependencies on Debian-based systems
-      ansible.builtin.apt:
-        name: "{{ item }}"
-        state: present
-      loop:
-        - iproute2
-        - ipset
-        - curl
-        - wget
-        - python3-pip
-        - python3-venv
-      when: ansible_facts['os_family'] == 'Debian'
+    - name: Print VIP Interface
+      debug:
+        msg: "VIP Interface: {{ interface }}"
+    - name: Print VIP Address
+      debug:
+        msg: "VIP Address: {{ vip_address }}"
 
-    - name: Install dependencies on RedHat-based systems
-      ansible.builtin.yum:
-        name: "{{ item }}"
-        state: present
-      loop:
-        - iproute
-        - ipset
-        - curl
-        - wget
-        - python3-pip
-      when: ansible_facts['os_family'] == 'RedHat'
+- name: Download RKE2
+  hosts: all
+  become: true
+  roles:
+    - role: rke2_download
 
-    - name: Create virtual environment
-      ansible.builtin.command: python3 -m venv /opt/ansible_venv
-      when: ansible_facts['os_family'] == 'Debian'
-
-    - name: Install kubernetes Python package in virtual environment
-      ansible.builtin.command: /opt/ansible_venv/bin/pip install kubernetes
-      when: ansible_facts['os_family'] == 'Debian'
-
-- name: Configure Kube-VIP
+- name: Prepare RKE2 Configuration
   hosts: control_plane
   become: true
   roles:
-    - role: kube-vip
+    - role: rke2_prepare
 
 - name: Install Cilium
   hosts: control_plane
@@ -48,8 +35,27 @@
   roles:
     - role: cilium
 
-- name: Configure MetalLB
+- name: Configure Kube-VIP
   hosts: control_plane
   become: true
   roles:
-    - role: metallb
+    - role: kube_vip
+
+
+# - name: Configure MetalLB
+#   hosts: control_plane
+#   become: true
+#   roles:
+#     - role: metallb
+
+# - name: Add servers to RKE2 cluster
+#   hosts: control_plane
+#   become: true
+#   roles:
+#     - role: add_server
+
+# - name: Apply additional manifests
+#   hosts: control_plane
+#   become: true
+#   roles:
+#     - role: apply_manifests
