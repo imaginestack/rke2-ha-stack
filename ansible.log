@@ -14723,3 +14723,140 @@ The offending line appears to be:
 2024-06-06 14:14:37,068 p=90478 u=cto n=ansible | dash                       : ok=32   changed=13   unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
 2024-06-06 14:14:37,068 p=90478 u=cto n=ansible | rke2                       : ok=26   changed=11   unreachable=0    failed=1    skipped=7    rescued=0    ignored=0   
 2024-06-06 14:14:37,068 p=90478 u=cto n=ansible | rke3                       : ok=26   changed=11   unreachable=0    failed=1    skipped=7    rescued=0    ignored=0   
+2024-06-08 03:53:04,006 p=97591 u=cto n=ansible | PLAY [Prepare Nodes] ***********************************************************
+2024-06-08 03:53:04,025 p=97591 u=cto n=ansible | TASK [Gathering Facts] *********************************************************
+2024-06-08 03:53:06,508 p=97591 u=cto n=ansible | ok: [rke2-server2]
+2024-06-08 03:53:06,561 p=97591 u=cto n=ansible | ok: [rke2-server1]
+2024-06-08 03:53:06,711 p=97591 u=cto n=ansible | ok: [rke2-server3]
+2024-06-08 03:53:06,768 p=97591 u=cto n=ansible | TASK [prepare_nodes : Enable IPv4 forwarding] **********************************
+2024-06-08 03:53:07,140 p=97591 u=cto n=ansible | ok: [rke2-server1]
+2024-06-08 03:53:07,155 p=97591 u=cto n=ansible | ok: [rke2-server2]
+2024-06-08 03:53:07,200 p=97591 u=cto n=ansible | ok: [rke2-server3]
+2024-06-08 03:53:07,213 p=97591 u=cto n=ansible | TASK [prepare_nodes : Enable IPv6 forwarding] **********************************
+2024-06-08 03:53:07,442 p=97591 u=cto n=ansible | ok: [rke2-server1]
+2024-06-08 03:53:07,482 p=97591 u=cto n=ansible | ok: [rke2-server2]
+2024-06-08 03:53:07,511 p=97591 u=cto n=ansible | ok: [rke2-server3]
+2024-06-08 03:53:07,528 p=97591 u=cto n=ansible | TASK [prepare_nodes : Install packages on Debian-based systems] ****************
+2024-06-08 03:53:08,534 p=97591 u=cto n=ansible | ok: [rke2-server1]
+2024-06-08 03:53:08,558 p=97591 u=cto n=ansible | ok: [rke2-server2]
+2024-06-08 03:53:08,695 p=97591 u=cto n=ansible | ok: [rke2-server3]
+2024-06-08 03:53:08,713 p=97591 u=cto n=ansible | TASK [prepare_nodes : Install packages on RedHat-based systems] ****************
+2024-06-08 03:53:08,764 p=97591 u=cto n=ansible | skipping: [rke2-server1]
+2024-06-08 03:53:08,764 p=97591 u=cto n=ansible | skipping: [rke2-server2]
+2024-06-08 03:53:08,775 p=97591 u=cto n=ansible | skipping: [rke2-server3]
+2024-06-08 03:53:08,785 p=97591 u=cto n=ansible | TASK [prepare_nodes : Create virtual environment] ******************************
+2024-06-08 03:53:10,963 p=97591 u=cto n=ansible | changed: [rke2-server1]
+2024-06-08 03:53:11,032 p=97591 u=cto n=ansible | changed: [rke2-server2]
+2024-06-08 03:53:11,179 p=97591 u=cto n=ansible | changed: [rke2-server3]
+2024-06-08 03:53:11,198 p=97591 u=cto n=ansible | TASK [prepare_nodes : Install kubernetes Python package in virtual environment] ***
+2024-06-08 03:53:11,972 p=97591 u=cto n=ansible | changed: [rke2-server1]
+2024-06-08 03:53:12,084 p=97591 u=cto n=ansible | changed: [rke2-server2]
+2024-06-08 03:53:12,191 p=97591 u=cto n=ansible | changed: [rke2-server3]
+2024-06-08 03:53:12,314 p=97591 u=cto n=ansible | PLAY [Debug Variables] *********************************************************
+2024-06-08 03:53:12,321 p=97591 u=cto n=ansible | TASK [Gathering Facts] *********************************************************
+2024-06-08 03:53:13,396 p=97591 u=cto n=ansible | ok: [rke2-server1]
+2024-06-08 03:53:13,443 p=97591 u=cto n=ansible | ok: [rke2-server2]
+2024-06-08 03:53:13,750 p=97591 u=cto n=ansible | ok: [rke2-server3]
+2024-06-08 03:53:13,827 p=97591 u=cto n=ansible | TASK [Print VIP Interface] *****************************************************
+2024-06-08 03:53:13,844 p=97591 u=cto n=ansible | fatal: [rke2-server1]: FAILED! => {"msg": "The task includes an option with an undefined variable. The error was: 'interface' is undefined. 'interface' is undefined\n\nThe error appears to be in '/home/cto/Documents/GitOps/rke2-ha-stack/playbooks/deploy_cluster.yml': line 13, column 7, but may\nbe elsewhere in the file depending on the exact syntax problem.\n\nThe offending line appears to be:\n\n  tasks:\n    - name: Print VIP Interface\n      ^ here\n"}
+2024-06-08 03:53:13,862 p=97591 u=cto n=ansible | fatal: [rke2-server2]: FAILED! => {"msg": "The task includes an option with an undefined variable. The error was: 'interface' is undefined. 'interface' is undefined\n\nThe error appears to be in '/home/cto/Documents/GitOps/rke2-ha-stack/playbooks/deploy_cluster.yml': line 13, column 7, but may\nbe elsewhere in the file depending on the exact syntax problem.\n\nThe offending line appears to be:\n\n  tasks:\n    - name: Print VIP Interface\n      ^ here\n"}
+2024-06-08 03:53:13,873 p=97591 u=cto n=ansible | fatal: [rke2-server3]: FAILED! => {"msg": "The task includes an option with an undefined variable. The error was: 'interface' is undefined. 'interface' is undefined\n\nThe error appears to be in '/home/cto/Documents/GitOps/rke2-ha-stack/playbooks/deploy_cluster.yml': line 13, column 7, but may\nbe elsewhere in the file depending on the exact syntax problem.\n\nThe offending line appears to be:\n\n  tasks:\n    - name: Print VIP Interface\n      ^ here\n"}
+2024-06-08 03:53:13,874 p=97591 u=cto n=ansible | PLAY RECAP *********************************************************************
+2024-06-08 03:53:13,874 p=97591 u=cto n=ansible | rke2-server1               : ok=7    changed=2    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
+2024-06-08 03:53:13,874 p=97591 u=cto n=ansible | rke2-server2               : ok=7    changed=2    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
+2024-06-08 03:53:13,874 p=97591 u=cto n=ansible | rke2-server3               : ok=7    changed=2    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
+2024-06-08 03:54:31,918 p=98093 u=cto n=ansible | PLAY [Prepare Nodes] ********************************************************************************************
+2024-06-08 03:54:31,929 p=98093 u=cto n=ansible | TASK [Gathering Facts] ******************************************************************************************
+2024-06-08 03:54:34,111 p=98093 u=cto n=ansible | ok: [rke2-server1]
+2024-06-08 03:54:34,142 p=98093 u=cto n=ansible | ok: [rke2-server2]
+2024-06-08 03:54:34,301 p=98093 u=cto n=ansible | ok: [rke2-server3]
+2024-06-08 03:54:34,363 p=98093 u=cto n=ansible | TASK [prepare_nodes : Enable IPv4 forwarding] *******************************************************************
+2024-06-08 03:54:34,677 p=98093 u=cto n=ansible | ok: [rke2-server1]
+2024-06-08 03:54:34,690 p=98093 u=cto n=ansible | ok: [rke2-server2]
+2024-06-08 03:54:35,720 p=98093 u=cto n=ansible | ok: [rke2-server3]
+2024-06-08 03:54:35,730 p=98093 u=cto n=ansible | TASK [prepare_nodes : Enable IPv6 forwarding] *******************************************************************
+2024-06-08 03:54:35,940 p=98093 u=cto n=ansible | ok: [rke2-server1]
+2024-06-08 03:54:35,970 p=98093 u=cto n=ansible | ok: [rke2-server2]
+2024-06-08 03:54:36,021 p=98093 u=cto n=ansible | ok: [rke2-server3]
+2024-06-08 03:54:36,028 p=98093 u=cto n=ansible | TASK [prepare_nodes : Install packages on Debian-based systems] *************************************************
+2024-06-08 03:54:36,844 p=98093 u=cto n=ansible | ok: [rke2-server1]
+2024-06-08 03:54:36,869 p=98093 u=cto n=ansible | ok: [rke2-server2]
+2024-06-08 03:54:37,027 p=98093 u=cto n=ansible | ok: [rke2-server3]
+2024-06-08 03:54:37,040 p=98093 u=cto n=ansible | TASK [prepare_nodes : Install packages on RedHat-based systems] *************************************************
+2024-06-08 03:54:37,069 p=98093 u=cto n=ansible | skipping: [rke2-server1]
+2024-06-08 03:54:37,085 p=98093 u=cto n=ansible | skipping: [rke2-server2]
+2024-06-08 03:54:37,096 p=98093 u=cto n=ansible | skipping: [rke2-server3]
+2024-06-08 03:54:37,105 p=98093 u=cto n=ansible | TASK [prepare_nodes : Create virtual environment] ***************************************************************
+2024-06-08 03:54:39,154 p=98093 u=cto n=ansible | changed: [rke2-server1]
+2024-06-08 03:54:39,296 p=98093 u=cto n=ansible | changed: [rke2-server2]
+2024-06-08 03:54:39,440 p=98093 u=cto n=ansible | changed: [rke2-server3]
+2024-06-08 03:54:39,450 p=98093 u=cto n=ansible | TASK [prepare_nodes : Install kubernetes Python package in virtual environment] *********************************
+2024-06-08 03:54:40,134 p=98093 u=cto n=ansible | changed: [rke2-server1]
+2024-06-08 03:54:40,204 p=98093 u=cto n=ansible | changed: [rke2-server2]
+2024-06-08 03:54:40,358 p=98093 u=cto n=ansible | changed: [rke2-server3]
+2024-06-08 03:54:40,469 p=98093 u=cto n=ansible | PLAY [Debug Variables] ******************************************************************************************
+2024-06-08 03:54:40,475 p=98093 u=cto n=ansible | TASK [Gathering Facts] ******************************************************************************************
+2024-06-08 03:54:41,419 p=98093 u=cto n=ansible | ok: [rke2-server1]
+2024-06-08 03:54:41,422 p=98093 u=cto n=ansible | ok: [rke2-server2]
+2024-06-08 03:54:41,725 p=98093 u=cto n=ansible | ok: [rke2-server3]
+2024-06-08 03:54:41,797 p=98093 u=cto n=ansible | TASK [Print VIP Interface] **************************************************************************************
+2024-06-08 03:54:41,834 p=98093 u=cto n=ansible | ok: [rke2-server1] => {
+    "msg": "VIP Interface: eth0"
+}
+2024-06-08 03:54:41,835 p=98093 u=cto n=ansible | ok: [rke2-server2] => {
+    "msg": "VIP Interface: eth0"
+}
+2024-06-08 03:54:41,852 p=98093 u=cto n=ansible | ok: [rke2-server3] => {
+    "msg": "VIP Interface: eth0"
+}
+2024-06-08 03:54:41,863 p=98093 u=cto n=ansible | TASK [Print VIP Address] ****************************************************************************************
+2024-06-08 03:54:41,895 p=98093 u=cto n=ansible | ok: [rke2-server1] => {
+    "msg": "VIP Address: 192.168.10.77"
+}
+2024-06-08 03:54:41,923 p=98093 u=cto n=ansible | ok: [rke2-server2] => {
+    "msg": "VIP Address: 192.168.10.77"
+}
+2024-06-08 03:54:41,957 p=98093 u=cto n=ansible | ok: [rke2-server3] => {
+    "msg": "VIP Address: 192.168.10.77"
+}
+2024-06-08 03:54:42,053 p=98093 u=cto n=ansible | PLAY [Download RKE2] ********************************************************************************************
+2024-06-08 03:54:42,061 p=98093 u=cto n=ansible | TASK [Gathering Facts] ******************************************************************************************
+2024-06-08 03:54:43,008 p=98093 u=cto n=ansible | ok: [rke2-server1]
+2024-06-08 03:54:43,079 p=98093 u=cto n=ansible | ok: [rke2-server2]
+2024-06-08 03:54:43,315 p=98093 u=cto n=ansible | ok: [rke2-server3]
+2024-06-08 03:54:43,393 p=98093 u=cto n=ansible | TASK [rke2_download : Create directory for RKE2 binary] *********************************************************
+2024-06-08 03:54:43,759 p=98093 u=cto n=ansible | ok: [rke2-server1]
+2024-06-08 03:54:43,773 p=98093 u=cto n=ansible | ok: [rke2-server2]
+2024-06-08 03:54:43,797 p=98093 u=cto n=ansible | ok: [rke2-server3]
+2024-06-08 03:54:43,808 p=98093 u=cto n=ansible | TASK [rke2_download : Download RKE2 binary] *********************************************************************
+2024-06-08 03:54:46,933 p=98093 u=cto n=ansible | changed: [rke2-server3]
+2024-06-08 03:54:47,324 p=98093 u=cto n=ansible | changed: [rke2-server2]
+2024-06-08 03:54:48,162 p=98093 u=cto n=ansible | changed: [rke2-server1]
+2024-06-08 03:54:48,170 p=98093 u=cto n=ansible | TASK [rke2_download : Set executable permissions on RKE2 binary] ************************************************
+2024-06-08 03:54:48,374 p=98093 u=cto n=ansible | ok: [rke2-server1]
+2024-06-08 03:54:48,422 p=98093 u=cto n=ansible | ok: [rke2-server2]
+2024-06-08 03:54:48,488 p=98093 u=cto n=ansible | ok: [rke2-server3]
+2024-06-08 03:54:48,571 p=98093 u=cto n=ansible | PLAY [Prepare RKE2 Configuration] *******************************************************************************
+2024-06-08 03:54:48,580 p=98093 u=cto n=ansible | TASK [Gathering Facts] ******************************************************************************************
+2024-06-08 03:54:49,520 p=98093 u=cto n=ansible | ok: [rke2-server2]
+2024-06-08 03:54:49,528 p=98093 u=cto n=ansible | ok: [rke2-server1]
+2024-06-08 03:54:49,805 p=98093 u=cto n=ansible | ok: [rke2-server3]
+2024-06-08 03:54:49,872 p=98093 u=cto n=ansible | TASK [rke2_prepare : Create directory for RKE2 config] **********************************************************
+2024-06-08 03:54:50,083 p=98093 u=cto n=ansible | changed: [rke2-server1]
+2024-06-08 03:54:50,118 p=98093 u=cto n=ansible | changed: [rke2-server2]
+2024-06-08 03:54:50,149 p=98093 u=cto n=ansible | changed: [rke2-server3]
+2024-06-08 03:54:50,158 p=98093 u=cto n=ansible | TASK [rke2_prepare : Create directory for RKE2 token] ***********************************************************
+2024-06-08 03:54:50,359 p=98093 u=cto n=ansible | changed: [rke2-server1]
+2024-06-08 03:54:50,399 p=98093 u=cto n=ansible | changed: [rke2-server2]
+2024-06-08 03:54:50,433 p=98093 u=cto n=ansible | changed: [rke2-server3]
+2024-06-08 03:54:50,446 p=98093 u=cto n=ansible | TASK [rke2_prepare : Deploy RKE2 server Configuration] **********************************************************
+2024-06-08 03:54:50,560 p=98093 u=cto n=ansible | An exception occurred during task execution. To see the full traceback, use -vvv. The error was: ansible.errors.AnsibleUndefinedVariable: "hostvars['dash']" is undefined. "hostvars['dash']" is undefined
+2024-06-08 03:54:50,561 p=98093 u=cto n=ansible | fatal: [rke2-server1]: FAILED! => {"changed": false, "msg": "AnsibleUndefinedVariable: \"hostvars['dash']\" is undefined. \"hostvars['dash']\" is undefined"}
+2024-06-08 03:54:50,580 p=98093 u=cto n=ansible | An exception occurred during task execution. To see the full traceback, use -vvv. The error was: ansible.errors.AnsibleUndefinedVariable: "hostvars['dash']" is undefined. "hostvars['dash']" is undefined
+2024-06-08 03:54:50,580 p=98093 u=cto n=ansible | fatal: [rke2-server2]: FAILED! => {"changed": false, "msg": "AnsibleUndefinedVariable: \"hostvars['dash']\" is undefined. \"hostvars['dash']\" is undefined"}
+2024-06-08 03:54:50,594 p=98093 u=cto n=ansible | An exception occurred during task execution. To see the full traceback, use -vvv. The error was: ansible.errors.AnsibleUndefinedVariable: "hostvars['dash']" is undefined. "hostvars['dash']" is undefined
+2024-06-08 03:54:50,594 p=98093 u=cto n=ansible | fatal: [rke2-server3]: FAILED! => {"changed": false, "msg": "AnsibleUndefinedVariable: \"hostvars['dash']\" is undefined. \"hostvars['dash']\" is undefined"}
+2024-06-08 03:54:50,596 p=98093 u=cto n=ansible | PLAY RECAP ******************************************************************************************************
+2024-06-08 03:54:50,597 p=98093 u=cto n=ansible | rke2-server1               : ok=16   changed=5    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
+2024-06-08 03:54:50,597 p=98093 u=cto n=ansible | rke2-server2               : ok=16   changed=5    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
+2024-06-08 03:54:50,597 p=98093 u=cto n=ansible | rke2-server3               : ok=16   changed=5    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   

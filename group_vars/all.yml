@@ -7,5 +7,5 @@ interface: eth0
 rke2_token: kubernetesecretoken
 rke2_ha_mode: true
 rke2_api_ip: 192.168.10.77
-rke2_servers_group_name: masters
+rke2_servers_group_name: control_plane
 
