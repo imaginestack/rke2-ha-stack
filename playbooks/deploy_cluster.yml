@@ -29,17 +29,17 @@
   roles:
     - role: rke2_prepare
 
-- name: Install Cilium
-  hosts: control_plane
-  become: true
-  roles:
-    - role: cilium
-
 - name: Configure Kube-VIP
   hosts: control_plane
   become: true
   roles:
     - role: kube_vip
+
+- name: Install Cilium
+  hosts: control_plane
+  become: true
+  roles:
+    - role: cilium
 
 - name: Add servers to RKE2 cluster
   hosts: control_plane

@@ -1,10 +1,9 @@
----
 # Create directory to deploy kube-vip manifest
 - name: Create directory for Kube VIP Manifest
   ansible.builtin.file:
     path: "/var/lib/rancher/rke2/server/manifests"
     state: directory
-    mode: '0644'
+    mode: '0755'
   when: inventory_hostname in groups['control_plane']
 
 # Deploy Kube VIP Configuration
@@ -46,3 +45,32 @@
   debug:
     msg: "{{ lookup('file', '/var/lib/rancher/rke2/server/tls/server-ca.crt') }}"
   when: inventory_hostname == groups['control_plane'][0]
+
+# Step 2: Copy kube-vip.yaml and certs to all masters
+- name: Copy kube-vip.yaml to all master nodes
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/files/kube-vip.yaml"
+    dest: "~/kube-vip.yaml"
+    mode: '0644'
+  when: inventory_hostname in groups['control_plane']
+
+- name: Copy config.yaml to all master nodes
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/files/config.yaml"
+    dest: "~/config.yaml"
+    mode: '0644'
+  when: inventory_hostname in groups['control_plane']
+
+- name: Copy SSH cert to all master nodes
+  ansible.builtin.copy:
+    src: "/home/{{ ansible_user }}/.ssh/{{ certName }}"
+    dest: "/home/{{ ansible_user }}/.ssh/{{ certName }}"
+    mode: '0600'
+  when: inventory_hostname in groups['control_plane']
+
+- name: Copy SSH public cert to all master nodes
+  ansible.builtin.copy:
+    src: "/home/{{ ansible_user }}/.ssh/{{ certName }}.pub"
+    dest: "/home/{{ ansible_user }}/.ssh/{{ certName }}.pub"
+    mode: '0644'
+  when: inventory_hostname in groups['control_plane']
