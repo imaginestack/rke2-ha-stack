@@ -41,7 +41,6 @@
   roles:
     - role: kube_vip
 
-
 - name: Add servers to RKE2 cluster
   hosts: control_plane
   become: true
