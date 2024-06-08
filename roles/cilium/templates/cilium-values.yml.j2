@@ -1,0 +1,13 @@
+# cilium-values.yml.j2
+image:
+  tag: {{ cilium_version }}
+
+cni:
+  install: true
+
+hubble:
+  enabled: true
+  relay:
+    enabled: true
+  ui:
+    enabled: true

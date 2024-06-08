@@ -14555,3 +14555,171 @@ The offending line appears to be:
 2024-06-02 20:26:28,629 p=39405 u=cto n=ansible | dash                       : ok=19   changed=8    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
 2024-06-02 20:26:28,629 p=39405 u=cto n=ansible | rke2                       : ok=26   changed=11   unreachable=0    failed=1    skipped=7    rescued=0    ignored=0   
 2024-06-02 20:26:28,629 p=39405 u=cto n=ansible | rke3                       : ok=26   changed=11   unreachable=0    failed=1    skipped=7    rescued=0    ignored=0   
+2024-06-06 14:11:19,935 p=89991 u=cto n=ansible | ERROR! the role 'cilium' was not found in /home/cto/Documents/GitOps/rke2-ha-stack/playbooks/roles:/home/cto/Documents/GitOps/rke2-ha-stack/roles:/home/cto/Documents/GitOps/rke2-ha-stack/playbooks
+
+The error appears to be in '/home/cto/Documents/GitOps/rke2-ha-stack/playbooks/deploy_cluster.yml': line 36, column 7, but may
+be elsewhere in the file depending on the exact syntax problem.
+
+The offending line appears to be:
+
+  roles:
+    - role: cilium
+      ^ here
+
+2024-06-06 14:12:25,346 p=90478 u=cto n=ansible | PLAY [Prepare Nodes] ********************************************************************************************
+2024-06-06 14:12:25,355 p=90478 u=cto n=ansible | TASK [Gathering Facts] ******************************************************************************************
+2024-06-06 14:12:27,306 p=90478 u=cto n=ansible | ok: [rke2]
+2024-06-06 14:12:27,329 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:12:28,514 p=90478 u=cto n=ansible | ok: [rke3]
+2024-06-06 14:12:28,577 p=90478 u=cto n=ansible | TASK [prepare_nodes : Enable IPv4 forwarding] *******************************************************************
+2024-06-06 14:12:28,913 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:12:28,918 p=90478 u=cto n=ansible | ok: [rke2]
+2024-06-06 14:12:28,928 p=90478 u=cto n=ansible | ok: [rke3]
+2024-06-06 14:12:28,938 p=90478 u=cto n=ansible | TASK [prepare_nodes : Enable IPv6 forwarding] *******************************************************************
+2024-06-06 14:12:29,149 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:12:29,200 p=90478 u=cto n=ansible | ok: [rke2]
+2024-06-06 14:12:29,221 p=90478 u=cto n=ansible | ok: [rke3]
+2024-06-06 14:12:29,239 p=90478 u=cto n=ansible | TASK [prepare_nodes : Install packages on Debian-based systems] *************************************************
+2024-06-06 14:12:30,130 p=90478 u=cto n=ansible | ok: [rke2]
+2024-06-06 14:12:30,145 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:12:30,217 p=90478 u=cto n=ansible | ok: [rke3]
+2024-06-06 14:12:30,226 p=90478 u=cto n=ansible | TASK [prepare_nodes : Install packages on RedHat-based systems] *************************************************
+2024-06-06 14:12:30,269 p=90478 u=cto n=ansible | skipping: [dash]
+2024-06-06 14:12:30,270 p=90478 u=cto n=ansible | skipping: [rke2]
+2024-06-06 14:12:30,280 p=90478 u=cto n=ansible | skipping: [rke3]
+2024-06-06 14:12:30,292 p=90478 u=cto n=ansible | TASK [prepare_nodes : Create virtual environment] ***************************************************************
+2024-06-06 14:12:32,371 p=90478 u=cto n=ansible | changed: [dash]
+2024-06-06 14:12:32,487 p=90478 u=cto n=ansible | changed: [rke2]
+2024-06-06 14:12:32,533 p=90478 u=cto n=ansible | changed: [rke3]
+2024-06-06 14:12:32,545 p=90478 u=cto n=ansible | TASK [prepare_nodes : Install kubernetes Python package in virtual environment] *********************************
+2024-06-06 14:12:33,252 p=90478 u=cto n=ansible | changed: [dash]
+2024-06-06 14:12:33,329 p=90478 u=cto n=ansible | changed: [rke2]
+2024-06-06 14:12:33,336 p=90478 u=cto n=ansible | changed: [rke3]
+2024-06-06 14:12:33,449 p=90478 u=cto n=ansible | PLAY [Debug Variables] ******************************************************************************************
+2024-06-06 14:12:33,459 p=90478 u=cto n=ansible | TASK [Gathering Facts] ******************************************************************************************
+2024-06-06 14:12:34,476 p=90478 u=cto n=ansible | ok: [rke2]
+2024-06-06 14:12:34,558 p=90478 u=cto n=ansible | ok: [rke3]
+2024-06-06 14:12:34,778 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:12:34,828 p=90478 u=cto n=ansible | TASK [Print VIP Interface] **************************************************************************************
+2024-06-06 14:12:34,870 p=90478 u=cto n=ansible | ok: [dash] => {
+    "msg": "VIP Interface: eth0"
+}
+2024-06-06 14:12:34,871 p=90478 u=cto n=ansible | ok: [rke2] => {
+    "msg": "VIP Interface: eth0"
+}
+2024-06-06 14:12:34,880 p=90478 u=cto n=ansible | ok: [rke3] => {
+    "msg": "VIP Interface: eth0"
+}
+2024-06-06 14:12:34,893 p=90478 u=cto n=ansible | TASK [Print VIP Address] ****************************************************************************************
+2024-06-06 14:12:34,940 p=90478 u=cto n=ansible | ok: [dash] => {
+    "msg": "VIP Address: 192.168.10.77"
+}
+2024-06-06 14:12:34,941 p=90478 u=cto n=ansible | ok: [rke2] => {
+    "msg": "VIP Address: 192.168.10.77"
+}
+2024-06-06 14:12:34,959 p=90478 u=cto n=ansible | ok: [rke3] => {
+    "msg": "VIP Address: 192.168.10.77"
+}
+2024-06-06 14:12:35,083 p=90478 u=cto n=ansible | PLAY [Download RKE2] ********************************************************************************************
+2024-06-06 14:12:35,093 p=90478 u=cto n=ansible | TASK [Gathering Facts] ******************************************************************************************
+2024-06-06 14:12:36,109 p=90478 u=cto n=ansible | ok: [rke2]
+2024-06-06 14:12:36,131 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:12:36,277 p=90478 u=cto n=ansible | ok: [rke3]
+2024-06-06 14:12:36,361 p=90478 u=cto n=ansible | TASK [rke2_download : Create directory for RKE2 binary] *********************************************************
+2024-06-06 14:12:36,748 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:12:36,756 p=90478 u=cto n=ansible | ok: [rke2]
+2024-06-06 14:12:36,770 p=90478 u=cto n=ansible | ok: [rke3]
+2024-06-06 14:12:36,789 p=90478 u=cto n=ansible | TASK [rke2_download : Download RKE2 binary] *********************************************************************
+2024-06-06 14:12:37,967 p=90478 u=cto n=ansible | ok: [rke2]
+2024-06-06 14:12:37,968 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:12:37,972 p=90478 u=cto n=ansible | ok: [rke3]
+2024-06-06 14:12:37,984 p=90478 u=cto n=ansible | TASK [rke2_download : Set executable permissions on RKE2 binary] ************************************************
+2024-06-06 14:12:38,224 p=90478 u=cto n=ansible | ok: [rke2]
+2024-06-06 14:12:38,243 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:12:38,252 p=90478 u=cto n=ansible | ok: [rke3]
+2024-06-06 14:12:38,347 p=90478 u=cto n=ansible | PLAY [Prepare RKE2 Configuration] *******************************************************************************
+2024-06-06 14:12:38,356 p=90478 u=cto n=ansible | TASK [Gathering Facts] ******************************************************************************************
+2024-06-06 14:12:39,309 p=90478 u=cto n=ansible | ok: [rke2]
+2024-06-06 14:12:39,527 p=90478 u=cto n=ansible | ok: [rke3]
+2024-06-06 14:12:39,604 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:12:39,663 p=90478 u=cto n=ansible | TASK [rke2_prepare : Create directory for RKE2 config] **********************************************************
+2024-06-06 14:12:39,893 p=90478 u=cto n=ansible | changed: [rke2]
+2024-06-06 14:12:39,914 p=90478 u=cto n=ansible | changed: [rke3]
+2024-06-06 14:12:39,923 p=90478 u=cto n=ansible | changed: [dash]
+2024-06-06 14:12:39,939 p=90478 u=cto n=ansible | TASK [rke2_prepare : Create directory for RKE2 token] ***********************************************************
+2024-06-06 14:12:40,152 p=90478 u=cto n=ansible | changed: [dash]
+2024-06-06 14:12:40,202 p=90478 u=cto n=ansible | changed: [rke2]
+2024-06-06 14:12:40,247 p=90478 u=cto n=ansible | changed: [rke3]
+2024-06-06 14:12:40,258 p=90478 u=cto n=ansible | TASK [rke2_prepare : Deploy RKE2 server Configuration] **********************************************************
+2024-06-06 14:12:41,021 p=90478 u=cto n=ansible | changed: [dash]
+2024-06-06 14:12:41,051 p=90478 u=cto n=ansible | changed: [rke3]
+2024-06-06 14:12:41,063 p=90478 u=cto n=ansible | changed: [rke2]
+2024-06-06 14:12:41,077 p=90478 u=cto n=ansible | TASK [rke2_prepare : Create systemd service file for RKE2 server] ***********************************************
+2024-06-06 14:12:41,572 p=90478 u=cto n=ansible | changed: [dash]
+2024-06-06 14:12:41,647 p=90478 u=cto n=ansible | changed: [rke3]
+2024-06-06 14:12:41,649 p=90478 u=cto n=ansible | changed: [rke2]
+2024-06-06 14:12:41,656 p=90478 u=cto n=ansible | TASK [rke2_prepare : Ensure RKE2 server is enabled and running] *************************************************
+2024-06-06 14:12:41,707 p=90478 u=cto n=ansible | skipping: [rke2]
+2024-06-06 14:12:41,722 p=90478 u=cto n=ansible | skipping: [rke3]
+2024-06-06 14:14:12,976 p=90478 u=cto n=ansible | changed: [dash]
+2024-06-06 14:14:12,986 p=90478 u=cto n=ansible | TASK [rke2_prepare : Wait for node-token] ***********************************************************************
+2024-06-06 14:14:13,044 p=90478 u=cto n=ansible | skipping: [rke2]
+2024-06-06 14:14:13,058 p=90478 u=cto n=ansible | skipping: [rke3]
+2024-06-06 14:14:13,429 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:14:13,438 p=90478 u=cto n=ansible | TASK [rke2_prepare : Wait for kubectl] **************************************************************************
+2024-06-06 14:14:13,484 p=90478 u=cto n=ansible | skipping: [rke2]
+2024-06-06 14:14:13,498 p=90478 u=cto n=ansible | skipping: [rke3]
+2024-06-06 14:14:13,665 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:14:13,677 p=90478 u=cto n=ansible | TASK [rke2_prepare : Copy kubectl to user bin] ******************************************************************
+2024-06-06 14:14:13,724 p=90478 u=cto n=ansible | skipping: [rke2]
+2024-06-06 14:14:13,734 p=90478 u=cto n=ansible | skipping: [rke3]
+2024-06-06 14:14:14,158 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:14:14,174 p=90478 u=cto n=ansible | TASK [rke2_prepare : Ensure .kube directory exists in user's home] **********************************************
+2024-06-06 14:14:14,403 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:14:15,124 p=90478 u=cto n=ansible | ok: [rke2]
+2024-06-06 14:14:15,189 p=90478 u=cto n=ansible | ok: [rke3]
+2024-06-06 14:14:15,210 p=90478 u=cto n=ansible | TASK [rke2_prepare : Copy config file to user home directory] ***************************************************
+2024-06-06 14:14:15,270 p=90478 u=cto n=ansible | skipping: [rke2]
+2024-06-06 14:14:15,281 p=90478 u=cto n=ansible | skipping: [rke3]
+2024-06-06 14:14:15,493 p=90478 u=cto n=ansible | changed: [dash]
+2024-06-06 14:14:15,507 p=90478 u=cto n=ansible | TASK [rke2_prepare : Replace IP address with server1] ***********************************************************
+2024-06-06 14:14:15,554 p=90478 u=cto n=ansible | skipping: [rke2]
+2024-06-06 14:14:15,568 p=90478 u=cto n=ansible | skipping: [rke3]
+2024-06-06 14:14:15,897 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:14:16,008 p=90478 u=cto n=ansible | PLAY [Install Cilium] *******************************************************************************************
+2024-06-06 14:14:16,018 p=90478 u=cto n=ansible | TASK [Gathering Facts] ******************************************************************************************
+2024-06-06 14:14:17,049 p=90478 u=cto n=ansible | ok: [rke2]
+2024-06-06 14:14:17,126 p=90478 u=cto n=ansible | ok: [rke3]
+2024-06-06 14:14:17,142 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:14:17,219 p=90478 u=cto n=ansible | TASK [cilium : Create directory for Cilium manifests] ***********************************************************
+2024-06-06 14:14:17,451 p=90478 u=cto n=ansible | ok: [dash]
+2024-06-06 14:14:17,479 p=90478 u=cto n=ansible | ok: [rke2]
+2024-06-06 14:14:17,494 p=90478 u=cto n=ansible | ok: [rke3]
+2024-06-06 14:14:17,508 p=90478 u=cto n=ansible | TASK [cilium : Install Helm] ************************************************************************************
+2024-06-06 14:14:18,386 p=90478 u=cto n=ansible | changed: [dash]
+2024-06-06 14:14:18,427 p=90478 u=cto n=ansible | changed: [rke3]
+2024-06-06 14:14:18,491 p=90478 u=cto n=ansible | changed: [rke2]
+2024-06-06 14:14:18,499 p=90478 u=cto n=ansible | TASK [cilium : Add Cilium Helm repository] **********************************************************************
+2024-06-06 14:14:18,727 p=90478 u=cto n=ansible | changed: [dash]
+2024-06-06 14:14:18,819 p=90478 u=cto n=ansible | changed: [rke2]
+2024-06-06 14:14:18,845 p=90478 u=cto n=ansible | changed: [rke3]
+2024-06-06 14:14:18,855 p=90478 u=cto n=ansible | TASK [cilium : Update Helm repositories] ************************************************************************
+2024-06-06 14:14:19,386 p=90478 u=cto n=ansible | changed: [rke3]
+2024-06-06 14:14:19,453 p=90478 u=cto n=ansible | changed: [dash]
+2024-06-06 14:14:19,489 p=90478 u=cto n=ansible | changed: [rke2]
+2024-06-06 14:14:19,500 p=90478 u=cto n=ansible | TASK [cilium : Copy Cilium values file] *************************************************************************
+2024-06-06 14:14:19,994 p=90478 u=cto n=ansible | changed: [dash]
+2024-06-06 14:14:20,048 p=90478 u=cto n=ansible | changed: [rke2]
+2024-06-06 14:14:20,114 p=90478 u=cto n=ansible | changed: [rke3]
+2024-06-06 14:14:20,122 p=90478 u=cto n=ansible | TASK [cilium : Ensure previous Cilium installation is removed] **************************************************
+2024-06-06 14:14:20,383 p=90478 u=cto n=ansible | changed: [dash]
+2024-06-06 14:14:20,426 p=90478 u=cto n=ansible | changed: [rke3]
+2024-06-06 14:14:20,427 p=90478 u=cto n=ansible | changed: [rke2]
+2024-06-06 14:14:20,441 p=90478 u=cto n=ansible | TASK [cilium : Install Cilium via Helm] *************************************************************************
+2024-06-06 14:14:36,920 p=90478 u=cto n=ansible | fatal: [dash]: FAILED! => {"attempts": 3, "changed": true, "cmd": "/usr/local/bin/helm install cilium cilium/cilium --version \"v1.15.5\" -n kube-system --create-namespace --values /etc/cilium/cilium-values.yml", "delta": "0:00:00.129043", "end": "2024-06-06 21:14:36.897926", "msg": "non-zero return code", "rc": 1, "start": "2024-06-06 21:14:36.768883", "stderr": "Error: INSTALLATION FAILED: Kubernetes cluster unreachable: Get \"https://127.0.0.1:6443/version\": dial tcp 127.0.0.1:6443: connect: connection refused", "stderr_lines": ["Error: INSTALLATION FAILED: Kubernetes cluster unreachable: Get \"https://127.0.0.1:6443/version\": dial tcp 127.0.0.1:6443: connect: connection refused"], "stdout": "", "stdout_lines": []}
+2024-06-06 14:14:36,963 p=90478 u=cto n=ansible | fatal: [rke2]: FAILED! => {"attempts": 3, "changed": true, "cmd": "/usr/local/bin/helm install cilium cilium/cilium --version \"v1.15.5\" -n kube-system --create-namespace --values /etc/cilium/cilium-values.yml", "delta": "0:00:00.130942", "end": "2024-06-06 21:14:36.930590", "msg": "non-zero return code", "rc": 1, "start": "2024-06-06 21:14:36.799648", "stderr": "Error: INSTALLATION FAILED: Kubernetes cluster unreachable: Get \"https://127.0.0.1:6443/version\": dial tcp 127.0.0.1:6443: connect: connection refused", "stderr_lines": ["Error: INSTALLATION FAILED: Kubernetes cluster unreachable: Get \"https://127.0.0.1:6443/version\": dial tcp 127.0.0.1:6443: connect: connection refused"], "stdout": "", "stdout_lines": []}
+2024-06-06 14:14:37,066 p=90478 u=cto n=ansible | fatal: [rke3]: FAILED! => {"attempts": 3, "changed": true, "cmd": "/usr/local/bin/helm install cilium cilium/cilium --version \"v1.15.5\" -n kube-system --create-namespace --values /etc/cilium/cilium-values.yml", "delta": "0:00:00.138805", "end": "2024-06-06 21:14:37.038205", "msg": "non-zero return code", "rc": 1, "start": "2024-06-06 21:14:36.899400", "stderr": "Error: INSTALLATION FAILED: Kubernetes cluster unreachable: Get \"https://127.0.0.1:6443/version\": dial tcp 127.0.0.1:6443: connect: connection refused", "stderr_lines": ["Error: INSTALLATION FAILED: Kubernetes cluster unreachable: Get \"https://127.0.0.1:6443/version\": dial tcp 127.0.0.1:6443: connect: connection refused"], "stdout": "", "stdout_lines": []}
+2024-06-06 14:14:37,067 p=90478 u=cto n=ansible | PLAY RECAP ******************************************************************************************************
+2024-06-06 14:14:37,068 p=90478 u=cto n=ansible | dash                       : ok=32   changed=13   unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
+2024-06-06 14:14:37,068 p=90478 u=cto n=ansible | rke2                       : ok=26   changed=11   unreachable=0    failed=1    skipped=7    rescued=0    ignored=0   
+2024-06-06 14:14:37,068 p=90478 u=cto n=ansible | rke3                       : ok=26   changed=11   unreachable=0    failed=1    skipped=7    rescued=0    ignored=0   

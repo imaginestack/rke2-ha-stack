@@ -1,0 +1,31 @@
+---
+- name: Create directory for Cilium manifests
+  file:
+    path: /etc/cilium
+    state: directory
+
+- name: Install Helm
+  shell: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+- name: Add Cilium Helm repository
+  command: /usr/local/bin/helm repo add cilium https://helm.cilium.io/
+  register: add_repo_result
+
+- name: Update Helm repositories
+  command: /usr/local/bin/helm repo update
+  when: add_repo_result is succeeded
+
+- name: Copy Cilium values file
+  template:
+    src: cilium-values.yml.j2
+    dest: /etc/cilium/cilium-values.yml
+
+- name: Ensure previous Cilium installation is removed
+  shell: /usr/local/bin/helm uninstall cilium -n kube-system || true
+
+- name: Install Cilium via Helm
+  shell: /usr/local/bin/helm install cilium cilium/cilium --version "{{ cilium_version }}" -n kube-system --create-namespace --values /etc/cilium/cilium-values.yml
+  register: cilium_install
+  until: cilium_install is succeeded
+  retries: 3
+  delay: 5
