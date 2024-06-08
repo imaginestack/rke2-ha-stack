@@ -13,3 +13,5 @@ disable:
 cni:
   - cilium
 disable-kube-proxy: true
+node-taint:
+  - "CriticalAddonsOnly=true:NoExecute"
