@@ -42,20 +42,14 @@
     - role: kube_vip
 
 
-# - name: Configure MetalLB
-#   hosts: control_plane
-#   become: true
-#   roles:
-#     - role: metallb
+- name: Add servers to RKE2 cluster
+  hosts: control_plane
+  become: true
+  roles:
+    - role: add_server
 
-# - name: Add servers to RKE2 cluster
-#   hosts: control_plane
-#   become: true
-#   roles:
-#     - role: add_server
-
-# - name: Apply additional manifests
-#   hosts: control_plane
-#   become: true
-#   roles:
-#     - role: apply_manifests
+- name: Apply additional manifests
+  hosts: control_plane
+  become: true
+  roles:
+    - role: apply_manifests
